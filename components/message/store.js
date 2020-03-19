@@ -1,22 +1,4 @@
-const db = require('mongoose');
 const Model = require('./model');
-const {config} = require('../../config');
-
-const USER = config.dbUser;
-const HOST = config.dbHost;
-const PASSWD = config.dbPassword;
-const DBNAME = config.dbName;
-const DBPORT = config.dbPort;
-
-db.Promise= global.Promise;
-db.connect(`mongodb+srv://${USER}:${PASSWD}@${HOST}/${DBNAME}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-
-/* console.log(USER + HOST + PASSWD + DBNAME + DBPORT) */
-
-console.log("Conectada con exito")
 
 function addMessage(message) {
     /* list.push(message); */
@@ -24,13 +6,36 @@ function addMessage(message) {
     myMessage.save();
 }
 
-function getMessage() {
-    return list;
+async function getMessage(filterUser) {
+    let filter = {};
+    if (filterUser != null) {
+        filter = { user: filterUser }
+    }
+    const messages = await Model.find(filter);
+    return messages;
+
+}
+
+async function updateText(id, message) {
+    const foundMessage = await Model.findOne({
+        _id: id
+    });
+    foundMessage.message = message;
+    const newMessage = await foundMessage.save();
+    return newMessage;
+}
+
+function removeMessage(id) {
+    return Model.deleteOne({
+        _id: id
+    })
 }
 
 module.exports = {
     add: addMessage,
     list: getMessage,
+    updateText: updateText,
+    remove: removeMessage
     //get
     //update
     //delete

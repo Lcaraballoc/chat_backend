@@ -1,20 +1,14 @@
 const express = require('express');
-const bodyParser = require('body-parser');/* 
-const router = require('./components/message/network'); */
+const bodyParser = require('body-parser');
+
+const db = require('./db')
+
 const router = require('./network/routes');
 
 var app = express();
-
 app.use(bodyParser.json());
-/* app.use(router); */
-
+db();
 router(app);
-
-
-
-/* app.use('/', function (req, res){
-    res.send('Hola');
-}) */
 
 app.use('/app', express.static('public'));
 
